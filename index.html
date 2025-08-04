@@ -45,7 +45,7 @@
 <body class="flex items-center justify-center">
     <div class="form-container max-w-3xl w-full mx-4 my-8 bg-white rounded-xl shadow-lg p-8">
         <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">Homeopathic Patient Intake Form</h1>
-        <form id="homeopathicIntakeForm" action="https://form.jotform.com/123456789" method="POST" class="space-y-8">
+        <form id="homeopathicIntakeForm" action="http://localhost:8000/submit-intake" method="POST" class="space-y-8">
             <!-- Patient Information -->
             <div class="section bg-gray-50 p-6 rounded-lg">
                 <h2 class="text-2xl font-semibold text-blue-600 mb-4 border-b-2 border-blue-200 pb-2">Patient Information</h2>
@@ -248,14 +248,54 @@
         </form>
     </div>
     <script>
-        // Basic form validation
-        document.getElementById('homeopathicIntakeForm').addEventListener('submit', function(e) {
+        // Enhanced form validation and submission
+        document.getElementById('homeopathicIntakeForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
             let fullName = document.getElementById('fullName').value;
             if (!fullName) {
-                e.preventDefault();
                 alert('Full Name is required!');
+                return;
+            }
+
+            // Collect form data
+            const formData = new FormData(this);
+            
+            try {
+                const response = await fetch('http://localhost:8000/submit-intake', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const result = await response.json();
+                
+                if (result.status === 'success') {
+                    alert('Form submitted successfully!');
+                    console.log('Patient Summary:', result.patient_summary);
+                    
+                    // Display summary in a new window or modal
+                    displayPatientSummary(result.patient_summary);
+                } else {
+                    alert('Error submitting form: ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error submitting form. Please try again.');
             }
         });
+
+        function displayPatientSummary(summary) {
+            const summaryWindow = window.open('', '_blank', 'width=800,height=600');
+            summaryWindow.document.write(`
+                <html>
+                <head><title>Patient Summary</title></head>
+                <body style="font-family: Arial, sans-serif; padding: 20px;">
+                    <h1>Patient Summary</h1>
+                    <pre style="white-space: pre-wrap; background: #f5f5f5; padding: 15px; border-radius: 5px;">${summary}</pre>
+                </body>
+                </html>
+            `);
+        }
     </script>
 </body>
 </html>
