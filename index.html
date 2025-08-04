@@ -7,7 +7,6 @@
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        /* Custom styles for additional enhancements */
         body {
             background: linear-gradient(to bottom, #e6f3fa, #f0f9ff);
             min-height: 100vh;
@@ -22,15 +21,15 @@
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
         input:focus, textarea:focus, select:focus {
-            border-color: #2563eb;
-            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+            border-color: #22c55e;
+            box-shadow: 0 0 0 3px rgba(34, 197, 94, 0.1);
             outline: none;
         }
         button {
             transition: background-color 0.3s ease, transform 0.2s ease;
         }
         button:hover {
-            background-color: #1d4ed8;
+            background-color: #15803d;
             transform: translateY(-2px);
         }
         .section {
@@ -40,27 +39,63 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        .header {
+            background: linear-gradient(to right, #22c55e, #14532d);
+            padding: 2rem;
+            border-radius: 0.75rem 0.75rem 0 0;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle, rgba(255,255,255,0.2) 0%, rgba(255,255,255,0) 70%);
+            animation: pulse 3s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 0.2; }
+            50% { transform: scale(1.2); opacity: 0.4; }
+            100% { transform: scale(1); opacity: 0.2; }
+        }
+        .logo-img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #ffffff;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+        }
     </style>
 </head>
 <body class="flex items-center justify-center">
-    <div class="form-container max-w-3xl w-full mx-4 my-8 bg-white rounded-xl shadow-lg p-8">
-        <h1 class="text-3xl font-bold text-gray-800 mb-6 text-center">KD Homeopathic Patient Intake Form</h1>
-        <form id="homeopathicIntakeForm" action="http://localhost:8000/submit-intake" method="POST" class="space-y-8">
+    <div class="form-container max-w-3xl w-full mx-4 my-8 bg-white rounded-xl shadow-lg">
+        <!-- Header with Logo and Title -->
+        <div class="header">
+            <!-- Logo Image -->
+            <img src="logo.jpeg" alt="KD Homeopathic Logo" class="logo-img mx-auto mb-4">
+            <h1 class="text-3xl font-bold text-white relative z-10">KD Homeopathic Patient Intake Form</h1>
+        </div>
+        <form id="homeopathicIntakeForm" action="https://form.jotform.com/123456789" method="POST" class="p-8 space-y-8">
             <!-- Patient Information -->
             <div class="section bg-gray-50 p-6 rounded-lg">
-                <h2 class="text-2xl font-semibold text-blue-600 mb-4 border-b-2 border-blue-200 pb-2">Patient Information</h2>
+                <h2 class="text-2xl font-semibold text-green-600 mb-4 border-b-2 border-green-200 pb-2">Patient Information</h2>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                         <label for="fullName" class="block text-sm font-medium text-gray-700">Full Name</label>
-                        <input type="text" id="fullName" name="fullName" required class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300">
+                        <input type="text" id="fullName" name="fullName" required class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300">
                     </div>
                     <div>
                         <label for="age" class="block text-sm font-medium text-gray-700">Age</label>
-                        <input type="text" id="age" name="age" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300">
+                        <input type="text" id="age" name="age" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300">
                     </div>
                     <div>
                         <label for="gender" class="block text-sm font-medium text-gray-700">Gender</label>
-                        <select id="gender" name="gender" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300">
+                        <select id="gender" name="gender" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300">
                             <option value="">Select</option>
                             <option value="male">Male</option>
                             <option value="female">Female</option>
@@ -69,145 +104,145 @@
                     </div>
                     <div>
                         <label for="contact" class="block text-sm font-medium text-gray-700">Contact Number</label>
-                        <input type="tel" id="contact" name="contact" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300">
+                        <input type="tel" id="contact" name="contact" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300">
                     </div>
                     <div class="md:col-span-2">
                         <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
-                        <input type="email" id="email" name="email" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300">
+                        <input type="email" id="email" name="email" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300">
                     </div>
                 </div>
             </div>
 
             <!-- Chief Complaints -->
             <div class="section bg-gray-50 p-6 rounded-lg">
-                <h2 class="text-2xl font-semibold text-blue-600 mb-4 border-b-2 border-blue-200 pb-2">Chief Complaints</h2>
+                <h2 class="text-2xl font-semibold text-green-600 mb-4 border-b-2 border-green-200 pb-2">Chief Complaints</h2>
                 <div class="space-y-4">
                     <div>
                         <label for="mainSymptoms" class="block text-sm font-medium text-gray-700">Describe your main symptoms (include onset, duration, and severity)</label>
-                        <textarea id="mainSymptoms" name="mainSymptoms" placeholder="E.g., headache for 2 weeks, sharp pain, worse in mornings" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"></textarea>
+                        <textarea id="mainSymptoms" name="mainSymptoms" placeholder="E.g., headache for 2 weeks, sharp pain, worse in mornings" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300"></textarea>
                     </div>
                     <div>
                         <label for="symptomTriggers" class="block text-sm font-medium text-gray-700">What triggers or worsens your symptoms?</label>
-                        <textarea id="symptomTriggers" name="symptomTriggers" placeholder="E.g., cold weather, stress, specific foods" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"></textarea>
+                        <textarea id="symptomTriggers" name="symptomTriggers" placeholder="E.g., cold weather, stress, specific foods" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300"></textarea>
                     </div>
                     <div>
                         <label for="symptomRelief" class="block text-sm font-medium text-gray-700">What relieves your symptoms?</label>
-                        <textarea id="symptomRelief" name="symptomRelief" placeholder="E.g., warmth, rest, specific foods" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"></textarea>
+                        <textarea id="symptomRelief" name="symptomRelief" placeholder="E.g., warmth, rest, specific foods" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300"></textarea>
                     </div>
                 </div>
             </div>
 
             <!-- Medical History -->
             <div class="section bg-gray-50 p-6 rounded-lg">
-                <h2 class="text-2xl font-semibold text-blue-600 mb-4 border-b-2 border-blue-200 pb-2">Medical History</h2>
+                <h2 class="text-2xl font-semibold text-green-600 mb-4 border-b-2 border-green-200 pb-2">Medical History</h2>
                 <div class="space-y-4">
                     <div>
                         <label for="pastIllnesses" class="block text-sm font-medium text-gray-700">Past Illnesses or Surgeries</label>
-                        <textarea id="pastIllnesses" name="pastIllnesses" placeholder="E.g., appendectomy in 2015, recurrent sinus infections" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"></textarea>
+                        <textarea id="pastIllnesses" name="pastIllnesses" placeholder="E.g., appendectomy in 2015, recurrent sinus infections" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300"></textarea>
                     </div>
                     <div>
                         <label for="currentMedications" class="block text-sm font-medium text-gray-700">Current Medications (including supplements and homeopathic remedies)</label>
-                        <textarea id="currentMedications" name="currentMedications" placeholder="E.g., ibuprofen, vitamin D, Arnica 30C" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"></textarea>
+                        <textarea id="currentMedications" name="currentMedications" placeholder="E.g., ibuprofen, vitamin D, Arnica 30C" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300"></textarea>
                     </div>
                     <div>
                         <label for="familyHistory" class="block text-sm font-medium text-gray-700">Family Medical History</label>
-                        <textarea id="familyHistory" name="familyHistory" placeholder="E.g., mother has hypertension, father had diabetes" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"></textarea>
+                        <textarea id="familyHistory" name="familyHistory" placeholder="E.g., mother has hypertension, father had diabetes" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300"></textarea>
                     </div>
                     <div>
                         <label for="allergies" class="block text-sm font-medium text-gray-700">Allergies</label>
-                        <textarea id="allergies" name="allergies" placeholder="E.g., penicillin, pollen" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"></textarea>
+                        <textarea id="allergies" name="allergies" placeholder="E.g., penicillin, pollen" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300"></textarea>
                     </div>
                 </div>
             </div>
 
             <!-- Lifestyle and Environment -->
             <div class="section bg-gray-50 p-6 rounded-lg">
-                <h2 class="text-2xl font-semibold text-blue-600 mb-4 border-b-2 border-blue-200 pb-2">Lifestyle and Environment</h2>
+                <h2 class="text-2xl font-semibold text-green-600 mb-4 border-b-2 border-green-200 pb-2">Lifestyle and Environment</h2>
                 <div class="space-y-4">
                     <div>
                         <label for="diet" class="block text-sm font-medium text-gray-700">Dietary Habits</label>
-                        <textarea id="diet" name="diet" placeholder="E.g., vegetarian, frequent fast food, high sugar intake" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"></textarea>
+                        <textarea id="diet" name="diet" placeholder="E.g., vegetarian, frequent fast food, high sugar intake" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300"></textarea>
                     </div>
                     <div>
                         <label for="sleep" class="block text-sm font-medium text-gray-700">Sleep Patterns</label>
-                        <textarea id="sleep" name="sleep" placeholder="E.g., 6 hours nightly, difficulty falling asleep" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"></textarea>
+                        <textarea id="sleep" name="sleep" placeholder="E.g., 6 hours nightly, difficulty falling asleep" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300"></textarea>
                     </div>
                     <div>
                         <label for="exercise" class="block text-sm font-medium text-gray-700">Exercise Routine</label>
-                        <textarea id="exercise" name="exercise" placeholder="E.g., walk 30 minutes daily, no regular exercise" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"></textarea>
+                        <textarea id="exercise" name="exercise" placeholder="E.g., walk 30 minutes daily, no regular exercise" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300"></textarea>
                     </div>
                     <div>
                         <label for="environment" class="block text-sm font-medium text-gray-700">Environmental Factors (e.g., weather, living conditions)</label>
-                        <textarea id="environment" name="environment" placeholder="E.g., live in humid climate, sensitive to cold" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"></textarea>
+                        <textarea id="environment" name="environment" placeholder="E.g., live in humid climate, sensitive to cold" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300"></textarea>
                     </div>
                 </div>
             </div>
 
             <!-- Emotional and Mental State -->
             <div class="section bg-gray-50 p-6 rounded-lg">
-                <h2 class="text-2xl font-semibold text-blue-600 mb-4 border-b-2 border-blue-200 pb-2">Emotional and Mental State</h2>
+                <h2 class="text-2xl font-semibold text-green-600 mb-4 border-b-2 border-green-200 pb-2">Emotional and Mental State</h2>
                 <div class="space-y-4">
                     <div>
                         <label for="emotionalState" class="block text-sm font-medium text-gray-700">Current Emotional State</label>
-                        <textarea id="emotionalState" name="emotionalState" placeholder="E.g., anxious, irritable, calm" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"></textarea>
+                        <textarea id="emotionalState" name="emotionalState" placeholder="E.g., anxious, irritable, calm" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300"></textarea>
                     </div>
                     <div>
                         <label for="stressors" class="block text-sm font-medium text-gray-700">Major Stressors or Life Events</label>
-                        <textarea id="stressors" name="stressors" placeholder="E.g., recent job loss, family issues" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"></textarea>
+                        <textarea id="stressors" name="stressors" placeholder="E.g., recent job loss, family issues" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300"></textarea>
                     </div>
                     <div>
                         <label for="mentalSymptoms" class="block text-sm font-medium text-gray-700">Mental Symptoms (e.g., memory, concentration)</label>
-                        <textarea id="mentalSymptoms" name="mentalSymptoms" placeholder="E.g., forgetful, difficulty focusing" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"></textarea>
+                        <textarea id="mentalSymptoms" name="mentalSymptoms" placeholder="E.g., forgetful, difficulty focusing" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300"></textarea>
                     </div>
                 </div>
             </div>
 
             <!-- General Preferences and Sensitivities -->
             <div class="section bg-gray-50 p-6 rounded-lg">
-                <h2 class="text-2xl font-semibold text-blue-600 mb-4 border-b-2 border-blue-200 pb-2">General Preferences and Sensitivities</h2>
+                <h2 class="text-2xl font-semibold text-green-600 mb-4 border-b-2 border-green-200 pb-2">General Preferences and Sensitivities</h2>
                 <div class="space-y-4">
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Temperature Preferences</label>
                         <div class="mt-2 space-x-4">
                             <label class="inline-flex items-center">
-                                <input type="radio" name="temperature" value="prefers_warm" class="h-4 w-4 text-blue-600 focus:ring-blue-300">
+                                <input type="radio" name="temperature" value="prefers_warm" class="h-4 w-4 text-green-600 focus:ring-green-300">
                                 <span class="ml-2 text-gray-700">Prefers Warm</span>
                             </label>
                             <label class="inline-flex items-center">
-                                <input type="radio" name="temperature" value="prefers_cold" class="h-4 w-4 text-blue-600 focus:ring-blue-300">
+                                <input type="radio" name="temperature" value="prefers_cold" class="h-4 w-4 text-green-600 focus:ring-green-300">
                                 <span class="ml-2 text-gray-700">Prefers Cold</span>
                             </label>
                             <label class="inline-flex items-center">
-                                <input type="radio" name="temperature" value="no_preference" class="h-4 w-4 text-blue-600 focus:ring-blue-300">
+                                <input type="radio" name="temperature" value="no_preference" class="h-4 w-4 text-green-600 focus:ring-green-300">
                                 <span class="ml-2 text-gray-700">No Preference</span>
                             </label>
                         </div>
                     </div>
                     <div>
                         <label for="foodPreferences" class="block text-sm font-medium text-gray-700">Food Preferences or Aversions</label>
-                        <textarea id="foodPreferences" name="foodPreferences" placeholder="E.g., crave sweets, dislike spicy food" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"></textarea>
+                        <textarea id="foodPreferences" name="foodPreferences" placeholder="E.g., crave sweets, dislike spicy food" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300"></textarea>
                     </div>
                     <div>
                         <label class="block text-sm font-medium text-gray-700">Time of Day Symptoms Are Worse</label>
                         <div class="mt-2 space-x-4">
                             <label class="inline-flex items-center">
-                                <input type="radio" name="timeOfDay" value="morning" class="h-4 w-4 text-blue-600 focus:ring-blue-300">
+                                <input type="radio" name="timeOfDay" value="morning" class="h-4 w-4 text-green-600 focus:ring-green-300">
                                 <span class="ml-2 text-gray-700">Morning</span>
                             </label>
                             <label class="inline-flex items-center">
-                                <input type="radio" name="timeOfDay" value="afternoon" class="h-4 w-4 text-blue-600 focus:ring-blue-300">
+                                <input type="radio" name="timeOfDay" value="afternoon" class="h-4 w-4 text-green-600 focus:ring-green-300">
                                 <span class="ml-2 text-gray-700">Afternoon</span>
                             </label>
                             <label class="inline-flex items-center">
-                                <input type="radio" name="timeOfDay" value="evening" class="h-4 w-4 text-blue-600 focus:ring-blue-300">
+                                <input type="radio" name="timeOfDay" value="evening" class="h-4 w-4 text-green-600 focus:ring-green-300">
                                 <span class="ml-2 text-gray-700">Evening</span>
                             </label>
                             <label class="inline-flex items-center">
-                                <input type="radio" name="timeOfDay" value="night" class="h-4 w-4 text-blue-600 focus:ring-blue-300">
+                                <input type="radio" name="timeOfDay" value="night" class="h-4 w-4 text-green-600 focus:ring-green-300">
                                 <span class="ml-2 text-gray-700">Night</span>
                             </label>
                             <label class="inline-flex items-center">
-                                <input type="radio" name="timeOfDay" value="no_pattern" class="h-4 w-4 text-blue-600 focus:ring-blue-300">
+                                <input type="radio" name="timeOfDay" value="no_pattern" class="h-4 w-4 text-green-600 focus:ring-green-300">
                                 <span class="ml-2 text-gray-700">No Pattern</span>
                             </label>
                         </div>
@@ -217,85 +252,45 @@
 
             <!-- Doctor's Observations -->
             <div class="section bg-gray-50 p-6 rounded-lg">
-                <h2 class="text-2xl font-semibold text-blue-600 mb-4 border-b-2 border-blue-200 pb-2">Doctor's Observations (To be filled by the Homeopath)</h2>
+                <h2 class="text-2xl font-semibold text-green-600 mb-4 border-b-2 border-green-200 pb-2">Doctor's Observations (To be filled by the Homeopath)</h2>
                 <div class="space-y-4">
                     <div>
                         <label for="doctorObservations" class="block text-sm font-medium text-gray-700">General Observations</label>
-                        <textarea id="doctorObservations" name="doctorObservations" placeholder="E.g., patient appears anxious, pale complexion" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"></textarea>
+                        <textarea id="doctorObservations" name="doctorObservations" placeholder="E.g., patient appears anxious, pale complexion" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300"></textarea>
                     </div>
                     <div>
                         <label for="suspectedOrgan" class="block text-sm font-medium text-gray-700">Suspected Organ/System Involved</label>
-                        <textarea id="suspectedOrgan" name="suspectedOrgan" placeholder="E.g., liver, respiratory system" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"></textarea>
+                        <textarea id="suspectedOrgan" name="suspectedOrgan" placeholder="E.g., liver, respiratory system" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300"></textarea>
                     </div>
                     <div>
                         <label for="relatedBodyParts" class="block text-sm font-medium text-gray-700">Related Body Parts Affected</label>
-                        <textarea id="relatedBodyParts" name="relatedBodyParts" placeholder="E.g., stomach, joints" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"></textarea>
+                        <textarea id="relatedBodyParts" name="relatedBodyParts" placeholder="E.g., stomach, joints" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300"></textarea>
                     </div>
                     <div>
                         <label for="diagnosisNotes" class="block text-sm font-medium text-gray-700">Preliminary Diagnosis Notes</label>
-                        <textarea id="diagnosisNotes" name="diagnosisNotes" placeholder="E.g., possible miasmatic influence, chronic fatigue" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"></textarea>
+                        <textarea id="diagnosisNotes" name="diagnosisNotes" placeholder="E.g., possible miasmatic influence, chronic fatigue" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300"></textarea>
                     </div>
                     <div>
                         <label for="prescribedRemedy" class="block text-sm font-medium text-gray-700">Prescribed Remedy and Potency</label>
-                        <textarea id="prescribedRemedy" name="prescribedRemedy" placeholder="E.g., Sulphur 30C, one dose daily" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-blue-300"></textarea>
+                        <textarea id="prescribedRemedy" name="prescribedRemedy" placeholder="E.g., Sulphur 30C, one dose daily" class="mt-1 w-full px-4 py-2 border border-gray-300 rounded-md focus:ring focus:ring-green-300"></textarea>
                     </div>
                 </div>
             </div>
 
             <div class="text-center">
-                <button type="submit" class="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-300">Submit Form</button>
+                <button type="submit" class="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-300">Submit Form</button>
             </div>
         </form>
     </div>
     <script>
-        // Enhanced form validation and submission
-        document.getElementById('homeopathicIntakeForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
+        // Basic form validation
+        document.getElementById('homeopathicIntakeForm').addEventListener('submit', function(e) {
             let fullName = document.getElementById('fullName').value;
             if (!fullName) {
+                e.preventDefault();
                 alert('Full Name is required!');
-                return;
-            }
-
-            // Collect form data
-            const formData = new FormData(this);
-            
-            try {
-                const response = await fetch('http://localhost:8000/submit-intake', {
-                    method: 'POST',
-                    body: formData
-                });
-                
-                const result = await response.json();
-                
-                if (result.status === 'success') {
-                    alert('Form submitted successfully!');
-                    console.log('Patient Summary:', result.patient_summary);
-                    
-                    // Display summary in a new window or modal
-                    displayPatientSummary(result.patient_summary);
-                } else {
-                    alert('Error submitting form: ' + result.message);
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Error submitting form. Please try again.');
             }
         });
-
-        function displayPatientSummary(summary) {
-            const summaryWindow = window.open('', '_blank', 'width=800,height=600');
-            summaryWindow.document.write(`
-                <html>
-                <head><title>Patient Summary</title></head>
-                <body style="font-family: Arial, sans-serif; padding: 20px;">
-                    <h1>Patient Summary</h1>
-                    <pre style="white-space: pre-wrap; background: #f5f5f5; padding: 15px; border-radius: 5px;">${summary}</pre>
-                </body>
-                </html>
-            `);
-        }
     </script>
 </body>
 </html>
