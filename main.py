@@ -1,10 +1,19 @@
 import json
-from fastapi import FastAPI, Form
+from fastapi import FastAPI, Form, Request
+from fastapi.responses import HTMLResponse, RedirectResponse
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from typing import Optional, Annotated
 import uvicorn
+import os
 
 app = FastAPI(title="Homeopathic Patient Intake API")
+
+# Mount static files directory to serve images, CSS, JS files
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
+# Store the latest patient data (in production, use a database)
+latest_patient_data = {}
 
 class PatientIntakeForm(BaseModel):
     # Patient Information
@@ -48,18 +57,296 @@ class PatientIntakeForm(BaseModel):
     diagnosisNotes: Optional[str] = None
     prescribedRemedy: Optional[str] = None
 
+@app.get("/", response_class=HTMLResponse)
+async def serve_form():
+    with open("index.html", "r") as f:
+        return HTMLResponse(content=f.read())
+
 @app.post("/submit-intake")
 async def submit_intake(data: Annotated[PatientIntakeForm, Form()]):
+    global latest_patient_data
+    
     # Generate patient summary
     summary = generate_patient_summary(data)
-    summarized_data={
+    
+    # Store data globally (use database in production)
+    latest_patient_data = {
         "status": "success",
         "message": "Patient intake form submitted successfully",
         "patient_data": data.dict(),
         "patient_summary": summary
     }
-    # json.dump(summarized_data, open("patient_data.json", "w"))
-    return summarized_data
+    
+    # Save to JSON file for persistence
+    with open("patient_data.json", "w") as f:
+        json.dump(latest_patient_data, f, indent=2)
+    
+    return RedirectResponse(url="http://0.0.0.0:8000/success", status_code=303)
+
+@app.get("/success", response_class=HTMLResponse)
+async def success_page():
+    return HTMLResponse(content="""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Form Submitted Successfully</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+    <body class="bg-gradient-to-b from-green-50 to-green-100 min-h-screen flex items-center justify-center">
+        <div class="bg-white p-8 rounded-xl shadow-lg text-center max-w-md">
+            <div class="text-green-600 text-6xl mb-4">✓</div>
+            <h1 class="text-2xl font-bold text-gray-800 mb-4">Form Submitted Successfully!</h1>
+            <p class="text-gray-600 mb-6">Patient intake form has been processed successfully.</p>
+            <button onclick="viewSummary()" class="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 transition-colors">
+                View Patient Summary
+            </button>
+        </div>
+        
+        <script>
+            function viewSummary() {
+                window.location.href = '/patient-summary';
+            }
+        </script>
+    </body>
+    </html>
+    """)
+
+@app.get("/patient-summary", response_class=HTMLResponse)
+async def patient_summary_page():
+    global latest_patient_data
+    
+    if not latest_patient_data:
+        return HTMLResponse(content="""
+        <html><body><h1>No patient data found</h1><a href="/">Go back to form</a></body></html>
+        """)
+    
+    summary = latest_patient_data.get("patient_summary", "No summary available")
+    patient_name = latest_patient_data.get("patient_data", {}).get("fullName", "Unknown Patient")
+    
+    return HTMLResponse(content=f"""
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Patient Summary - {patient_name}</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <style>
+            .summary-content {{
+                white-space: pre-wrap;
+                line-height: 1.6;
+            }}
+            @keyframes spin {{
+                to {{ transform: rotate(360deg); }}
+            }}
+            .animate-spin {{
+                animation: spin 1s linear infinite;
+            }}
+            @media print {{
+                .no-print {{
+                    display: none !important;
+                }}
+            }}
+        </style>
+    </head>
+    <body class="bg-gradient-to-b from-blue-50 to-blue-100 min-h-screen">
+        <div class="container mx-auto px-4 py-8">
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="bg-blue-600 text-white p-6">
+                    <h1 class="text-3xl font-bold">Patient Summary</h1>
+                    <p class="text-blue-100 mt-2">Comprehensive intake analysis</p>
+                </div>
+                
+                <div class="p-8">
+                    <div class="bg-gray-50 p-6 rounded-lg mb-6">
+                        <div class="summary-content text-gray-800 font-mono text-sm">{summary}</div>
+                    </div>
+                    
+                    <div class="flex gap-4 justify-center">
+                        <button onclick="sendToAI()" class="bg-green-600 text-white px-6 py-3 rounded-md hover:bg-green-700 transition-colors">
+                            Send to AI for Analysis
+                        </button>
+                        <button onclick="downloadSummary()" class="bg-blue-600 text-white px-6 py-3 rounded-md hover:bg-blue-700 transition-colors">
+                            Download Summary
+                        </button>
+                        <a href="/" class="bg-gray-600 text-white px-6 py-3 rounded-md hover:bg-gray-700 transition-colors inline-block">
+                            New Patient
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <script>
+            function sendToAI() {{
+                // Show loading state
+                const aiButton = document.querySelector('button[onclick="sendToAI()"]');
+                const originalText = aiButton.textContent;
+                aiButton.innerHTML = '<span class="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></span>Analyzing...';
+                aiButton.disabled = true;
+                
+                // Hide existing AI analysis if any
+                const existingAnalysis = document.getElementById('ai-analysis-section');
+                if (existingAnalysis) {{
+                    existingAnalysis.remove();
+                }}
+                
+                // Make API call to AI service
+                fetch('/analyze-with-ai', {{
+                    method: 'POST',
+                    headers: {{'Content-Type': 'application/json'}},
+                    body: JSON.stringify({{summary: `{summary}`}})
+                }})
+                .then(response => response.json())
+                .then(data => {{
+                    console.log('AI Analysis:', data);
+                    
+                    // Reset button
+                    aiButton.textContent = originalText;
+                    aiButton.disabled = false;
+                    
+                    // Display AI analysis results
+                    displayAIAnalysis(data);
+                }})
+                .catch(error => {{
+                    console.error('Error:', error);
+                    
+                    // Reset button
+                    aiButton.textContent = originalText;
+                    aiButton.disabled = false;
+                    
+                    alert('Error analyzing with AI. Please try again.');
+                }});
+            }}
+            
+            function displayAIAnalysis(analysisData) {{
+                const summaryContainer = document.querySelector('.p-8');
+                
+                // Create AI analysis section
+                const aiSection = document.createElement('div');
+                aiSection.id = 'ai-analysis-section';
+                aiSection.className = 'mt-8 bg-gradient-to-r from-purple-50 to-indigo-50 p-6 rounded-lg border-l-4 border-purple-500';
+                
+                aiSection.innerHTML = `
+                    <div class="flex items-center mb-4">
+                        <div class="bg-purple-600 text-white p-2 rounded-full mr-3">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl font-bold text-purple-800">AI Analysis Report</h2>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <h3 class="font-semibold text-gray-800 mb-2">Analysis Status:</h3>
+                            <p class="text-green-600 font-medium">${{analysisData.status || 'Completed'}}</p>
+                        </div>
+                        
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <h3 class="font-semibold text-gray-800 mb-2">AI Analysis:</h3>
+                            <p class="text-gray-700 whitespace-pre-wrap">${{analysisData.ai_analysis || 'No analysis available'}}</p>
+                        </div>
+                        
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <h3 class="font-semibold text-gray-800 mb-2">Recommended Remedies:</h3>
+                            <ul class="list-disc list-inside text-gray-700 space-y-1">
+                                ${{(analysisData.recommended_remedies || []).map(remedy => `<li>${{remedy}}</li>`).join('')}}
+                            </ul>
+                        </div>
+                        
+                        <div class="flex gap-3 mt-4">
+                            <button onclick="downloadAIReport()" class="bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors text-sm">
+                                Download AI Report
+                            </button>
+                            <button onclick="printReport()" class="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 transition-colors text-sm">
+                                Print Report
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                // Insert before the button container
+                const buttonContainer = summaryContainer.querySelector('.flex.gap-4.justify-center');
+                summaryContainer.insertBefore(aiSection, buttonContainer);
+                
+                // Smooth scroll to AI analysis
+                aiSection.scrollIntoView({{ behavior: 'smooth', block: 'start' }});
+            }}
+            
+            function downloadAIReport() {{
+                const aiAnalysis = document.getElementById('ai-analysis-section');
+                if (aiAnalysis) {{
+                    const reportText = aiAnalysis.innerText;
+                    const element = document.createElement('a');
+                    const file = new Blob([reportText], {{type: 'text/plain'}});
+                    element.href = URL.createObjectURL(file);
+                    element.download = '{patient_name}_AI_Analysis.txt';
+                    document.body.appendChild(element);
+                    element.click();
+                    document.body.removeChild(element);
+                }}
+            }}
+            
+            function printReport() {{
+                window.print();
+            }}
+            
+            function downloadSummary() {{
+                const element = document.createElement('a');
+                const file = new Blob([`{summary}`], {{type: 'text/plain'}});
+                element.href = URL.createObjectURL(file);
+                element.download = '{patient_name}_summary.txt';
+                document.body.appendChild(element);
+                element.click();
+                document.body.removeChild(element);
+            }}
+        </script>
+    </body>
+    </html>
+    """)
+
+# Placeholder for AI integration
+@app.post("/analyze-with-ai")
+async def analyze_with_ai(request: Request):
+    data = await request.json()
+    summary = data.get("summary", "")
+    
+    # Simulate AI processing time
+    import time
+    time.sleep(2)  # Remove this in production
+    
+    # Here you'll integrate with your agentic AI
+    # For now, return a more detailed mock response
+    return {
+        "status": "Analysis Complete",
+        "ai_analysis": """Based on the patient's symptoms and constitutional factors, the following homeopathic analysis has been generated:
+
+CONSTITUTIONAL TYPE: The patient shows signs of a [Constitutional Type] constitution with predominant symptoms affecting the [affected systems].
+
+MIASMATIC ANALYSIS: Primary miasm appears to be [Miasm Type] based on the chronic nature of symptoms and family history.
+
+SYMPTOM TOTALITY: The key symptoms forming the totality are:
+- Primary complaint with specific modalities
+- Mental/emotional state indicators
+- Physical general symptoms
+- Particular symptoms with clear modalities
+
+REMEDY SELECTION RATIONALE: The recommended remedies are selected based on symptom similarity, constitutional match, and miasmatic considerations.""",
+        "recommended_remedies": [
+            "Sulphur 30C - For constitutional treatment, one dose weekly",
+            "Nux Vomica 200C - For digestive complaints and stress-related symptoms",
+            "Arsenicum Album 30C - For anxiety and digestive issues with specific modalities"
+        ],
+        "confidence_score": "85%",
+        "follow_up_recommendations": [
+            "Monitor patient response for 2 weeks",
+            "Avoid antidoting substances",
+            "Schedule follow-up consultation"
+        ]
+    }
 
 def generate_patient_summary(data: PatientIntakeForm) -> str:
     summary_parts = []
