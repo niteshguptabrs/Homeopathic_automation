@@ -12,6 +12,23 @@ app = FastAPI(title="Homeopathic Patient Intake API")
 # Mount static files directory to serve images, CSS, JS files
 app.mount("/static", StaticFiles(directory="static"), name="static")
 
+@app.on_event("startup")
+async def startup_event():
+    """Initialize the AI agent once when the app starts"""
+    global global_agent
+    print("🚀 Initializing Homeopathic AI Agent...")
+    try:
+        global_agent = await get_homeopathic_agent()
+        print("✅ AI Agent initialized successfully!")
+    except Exception as e:
+        print(f"❌ Failed to initialize AI Agent: {e}")
+        global_agent = None
+# Import and use the AI agent
+from ai_agent import get_homeopathic_agent
+
+# Global agent instance - initialized once
+global_agent = None
+
 # Store the latest patient data (in production, use a database)
 latest_patient_data = {}
 
@@ -308,44 +325,61 @@ async def patient_summary_page():
     </html>
     """)
 
-# Placeholder for AI integration
+# AI integration endpoint
 @app.post("/analyze-with-ai")
 async def analyze_with_ai(request: Request):
+    global global_agent
     data = await request.json()
     summary = data.get("summary", "")
-    
-    # Simulate AI processing time
-    import time
-    time.sleep(2)  # Remove this in production
-    
-    # Here you'll integrate with your agentic AI
-    # For now, return a more detailed mock response
+
+    try:
+        # Check if agent is initialized
+        if global_agent is None:
+            print("⚠️ Agent not initialized, attempting to initialize now...")
+            global_agent = await get_homeopathic_agent()
+
+        # Analyze the patient case using the global agent
+        result = await global_agent.analyze_patient_case(summary)
+
+        return result
+        
+    except Exception as e:
+        print(f"AI Analysis Error: {e}")
+        # Fallback to mock response if AI fails
+        return {
+            "status": "Analysis Complete (Fallback Mode)",
+            "ai_analysis": f"""AI Analysis temporarily unavailable. Error: {str(e)}
+
+FALLBACK ANALYSIS:
+Based on the provided patient information, a comprehensive homeopathic analysis would consider:
+
+1. Constitutional assessment based on physical and mental symptoms
+2. Miasmatic evaluation considering chronic patterns
+3. Symptom totality including modalities and peculiarities
+4. Remedy selection based on similimum principle
+
+Please consult with a qualified homeopathic practitioner for proper case analysis.""",
+            "recommended_remedies": [
+                "Constitutional remedy - to be determined by qualified practitioner",
+                "Symptomatic remedy - based on acute presentation",
+                "Follow-up consultation recommended"
+            ],
+            "confidence_score": "N/A",
+            "follow_up_recommendations": [
+                "Consult qualified homeopathic practitioner",
+                "Provide complete case history",
+                "Monitor symptom changes"
+            ]
+        }
+
+@app.get("/agent-status")
+async def agent_status():
+    """Check the status of the AI agent"""
+    global global_agent
     return {
-        "status": "Analysis Complete",
-        "ai_analysis": """Based on the patient's symptoms and constitutional factors, the following homeopathic analysis has been generated:
-
-CONSTITUTIONAL TYPE: The patient shows signs of a [Constitutional Type] constitution with predominant symptoms affecting the [affected systems].
-
-MIASMATIC ANALYSIS: Primary miasm appears to be [Miasm Type] based on the chronic nature of symptoms and family history.
-
-SYMPTOM TOTALITY: The key symptoms forming the totality are:
-- Primary complaint with specific modalities
-- Mental/emotional state indicators
-- Physical general symptoms
-- Particular symptoms with clear modalities
-
-REMEDY SELECTION RATIONALE: The recommended remedies are selected based on symptom similarity, constitutional match, and miasmatic considerations.""",
-        "recommended_remedies": [
-            "Sulphur 30C - For constitutional treatment, one dose weekly",
-            "Nux Vomica 200C - For digestive complaints and stress-related symptoms",
-            "Arsenicum Album 30C - For anxiety and digestive issues with specific modalities"
-        ],
-        "confidence_score": "85%",
-        "follow_up_recommendations": [
-            "Monitor patient response for 2 weeks",
-            "Avoid antidoting substances",
-            "Schedule follow-up consultation"
-        ]
+        "agent_initialized": global_agent is not None,
+        "status": "ready" if global_agent is not None else "not_initialized",
+        "message": "AI Agent is ready for analysis" if global_agent is not None else "AI Agent is not initialized"
     }
 
 def generate_patient_summary(data: PatientIntakeForm) -> str:

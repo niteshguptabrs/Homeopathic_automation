@@ -1,0 +1,22 @@
+# Agno framework
+phidata>=2.4.0
+
+# Vector database
+chromadb>=0.4.0
+
+# PDF processing
+pypdf>=3.0.0
+pymupdf>=1.23.0  # Alternative PDF reader for better performance
+
+# Google Search
+google-api-python-client>=2.0.0
+
+# Environment management
+python-dotenv>=1.0.0
+
+# Async support
+aiofiles>=23.0.0
+
+# Additional utilities
+numpy>=1.24.0
+pandas>=2.0.0
