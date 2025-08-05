@@ -1,0 +1,4 @@
+models/
+*.db
+logs/
+temp/

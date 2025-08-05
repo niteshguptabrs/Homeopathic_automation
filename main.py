@@ -1,3 +1,4 @@
+import datetime
 import json
 from fastapi import FastAPI, Form, Request
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -95,7 +96,7 @@ async def submit_intake(data: Annotated[PatientIntakeForm, Form()]):
     }
     
     # Save to JSON file for persistence
-    with open("patient_data.json", "w") as f:
+    with open(f"temp/{latest_patient_data['patient_data']['fullName']}_{datetime.now().strftime('%Y%m%d%H%M%S')}_patient_data.json", "w") as f:
         json.dump(latest_patient_data, f, indent=2)
     
     return RedirectResponse(url="http://0.0.0.0:8000/success", status_code=303)
